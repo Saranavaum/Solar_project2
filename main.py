@@ -1,37 +1,40 @@
-#paquetes necesarios:
+# Packages
 from astropy.io import fits
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import numpy as np
 
-plt.rcParams["figure.figsize"] = (10, 6)    # Tamaño de las figuras
-plt.rc('xtick', labelsize = 10)             # Tamaño de números en X
-plt.rc('ytick', labelsize = 10)             # Tamaño de números en Y
-plt.rcParams['axes.titlesize'] = 15         # Tamaño de rótulos en ejes
-plt.rcParams['axes.labelsize'] = 10         # Tamaño de títulos
+# Plots parameters
+plt.rcParams["figure.figsize"] = (10, 6)    # Size of the figures
+plt.rc('xtick', labelsize = 10)             # Number size in X
+plt.rc('ytick', labelsize = 10)             # Number size in Y
+plt.rcParams['axes.titlesize'] = 15         # Title size
+plt.rcParams['axes.labelsize'] = 10         # Label size on axes
 
 
-
+#----Functions----#
+# Least squares polynomial fit
 def ajuste(I,landa,nlambda_l,nlambda_h):
     
     nl=nlambda_l
     nh=nlambda_h
         
     coef=np.polyfit(landa[nl:nh],I[nl:nh],deg=2)
-    xadj=np.linspace(landa[nl],landa[nh],(nh-nl)*20) #El ultimo numero multiplicando indica cuanta aumentamos
-                                                    #la resolucion
+    xadj=np.linspace(landa[nl],landa[nh],(nh-nl)*20) # The last number multiplied indicates how much we increase the resolution
     pol=np.poly1d(coef)
     Iadj= pol(xadj)
     
     return xadj, Iadj
 
+# Search for the position of the minimum value
 def min_arg(vec,in1,in2):
     vmin = min(vec[in1:in2])
     indmin=np.argmin(vec[in1:in2])+in1
     
     return vmin, indmin
 
-def find_closest(arr, val):  # Búsqueda del punto más cercano en un array
+# Search for the nearest point in an array
+def find_closest(arr, val):  
     diff = abs(arr - val)
     closest = np.min(diff)
     index = np.where(diff == closest)[0][0]
@@ -46,22 +49,24 @@ def der(y, z):  # Derivada centered
     return der
 
 
+#---Main Program---#
 
+#plt.close('all')
 
-plt.close('all')
-#tomamos los datos de los archivos .fits
-
+# Getting the data from the .fits
 data=fits.getdata('Stokes_sunspot_HINODE.fits')
 cal=fits.getdata('atlas_6301_6302.fits')
 
-#Definimos los parametros de Stokes
+# Defining the Stokes parameters
 I=data[0,:,:,:]
 Q=data[1,:,:,:]
 U=data[2,:,:,:]
 V=data[3,:,:,:]
 
+# Defining the calibration parameters
 landa_cal=cal[:,0]
 int_cal=cal[:,1]
+
 #tenemos 96 imagenes diferentes para cada frecuencia, pero desconocemos la frecuencia,
 #por lo que las definimos enumeradas
 landa=np.arange(len(I[0,0,:]))
@@ -136,7 +141,7 @@ V_um=np.mean(V[xu:xu+dltu,yu:yu+dltu,:],axis=(0,1))
 
 
 
-###############################################
+#---Calibrating the Spectrum---#
 plt.figure(4)
 espect_cal = plt.plot(landa_cal,int_cal)
 #los datos de este atlas salen multiplicados por 1.e4 y tienen un muestreo de 2 mA.
