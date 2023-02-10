@@ -67,15 +67,13 @@ V=data[3,:,:,:]
 landa_cal=cal[:,0]
 int_cal=cal[:,1]
 
-#tenemos 96 imagenes diferentes para cada frecuencia, pero desconocemos la frecuencia,
-#por lo que las definimos enumeradas
+# Enumeration of the frequencies to calibrate
 landa=np.arange(len(I[0,0,:]))
 
-#segunda dimension del cubo 399 puntos correspondientes a diferentes posiciones de la rendija 
-#en el tiempo en su barrido
+# Cube dimensions: different positions of the slit in time in its sweep
 
+# Plotting the sunspot
 plt.figure(1)
-#mancha = plt.imshow(np.swapaxes(I[:, :, 0],0,1), cmap = 'inferno')
 mancha = plt.imshow(I[:, :, 0],origin='lower', cmap = 'inferno')
 cbar = plt.colorbar(mancha)
 cbar.set_label('I [cuentas]')
@@ -84,14 +82,13 @@ plt.xlabel('Desplazamiento de la rendija en el tiempo [px]')
 plt.ylabel('Puntos a lo largo de la rendija [px]')
 
 
-#esto nos pide la posicion del primer vertice y la anchura del rectagulo
 
-
+# Selecting the calm section
 xc=2
 yc=2
 dltc=50
 
-
+# Selecting the umbra section
 xu=160
 yu=210
 dltu=35
@@ -110,7 +107,8 @@ plt.gca().add_patch(Rectangle((160,210),35,35,
 plt.text(xu,yu+dltu+20, 'Umbra', c = 'y', fontsize=15)
 
 #plt.savefig('1.eps',format='eps')
-#Espectro medio de I en calma
+
+# Medium spectrum of I in calm section
 I_calm=np.mean(I[xc:xc+dltc,yc:yc+dltc,:],axis=(0,1)) 
 Q_calm=np.mean(Q[xc:xc+dltc,yc:yc+dltc,:],axis=(0,1)) 
 U_calm=np.mean(U[xc:xc+dltc,yc:yc+dltc,:],axis=(0,1)) 
@@ -126,10 +124,8 @@ plt.xlabel(r'$\lambda$')
 plt.grid()
 #plt.savefig('2.eps',format='eps')
 
-############################Umbra #####################
 
-
-#Espectro medio de I en calma
+# Medium spectrum of I in umbra section
 I_um=np.mean(I[xu:xu+dltu,yu:yu+dltu,:],axis=(0,1)) 
 Q_um=np.mean(Q[xu:xu+dltu,yu:yu+dltu,:],axis=(0,1)) 
 U_um=np.mean(U[xu:xu+dltu,yu:yu+dltu,:],axis=(0,1)) 
@@ -144,31 +140,31 @@ V_um=np.mean(V[xu:xu+dltu,yu:yu+dltu,:],axis=(0,1))
 #---Calibrating the Spectrum---#
 plt.figure(4)
 espect_cal = plt.plot(landa_cal,int_cal)
-#los datos de este atlas salen multiplicados por 1.e4 y tienen un muestreo de 2 mA.
+# the data in this atlas are multiplied by 1.e4 and have a sampling of 2 mA.
 espect_cal = plt.plot(landa_cal[745:765],int_cal[745:765],'r',markersize=1)
 espect_cal = plt.plot(landa_cal[1245:1260],int_cal[1245:1260],'r',markersize=1)
 plt.title('Espectro de calibración')
 plt.ylabel('Intensidad [cuentas]')
 plt.xlabel(r'$\lambda$ [$\AA$]')
 plt.grid()
-
 #plt.savefig('4.eps',format='eps')
-#vamos a buscar el mínimo de las lineas solares que se ven
-#linea 1 de la calibración
 
+# Search for the sunspot minimum
+
+# Line 1 of the calibration
+# search range
 in1= 745
 in2= 765
 
 v_m_1 = min(int_cal[in1:in2])
 ind_min1=np.argmin(int_cal[in1:in2])+in1
-#ind=np.argmin(np.abs(int_cal-valor_minimo))
 long_min=landa_cal[756]
 plt.figure(5)
 espect_cal = plt.plot(landa_cal[in1:in2],int_cal[in1:in2],'r.',label='datos')
 espect_cal1 = plt.plot(landa_cal[756],int_cal[756],'k.',markersize=9,label='Minimo de los datos')
 
 
-#hacemos el ajuste
+# Fitting the minimum
 aju_atlas1=ajuste(int_cal,landa_cal,in1,in2)
 aju_atlas1=np.array(aju_atlas1)
 vmim1=min(aju_atlas1[1,:])
@@ -181,8 +177,9 @@ plt.legend()
 plt.ylabel('Intensidad [cuentas]')
 plt.xlabel(r'$\lambda$ [$\AA$]')
 #plt.savefig('5.eps',format='eps')
-#linea 2 de calibración
 
+
+# Line 2 of the calibration
 in1= 1245
 in2= 1260
 
