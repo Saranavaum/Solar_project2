@@ -54,7 +54,7 @@ def der(y, z):  # Derivada centered
 #plt.close('all')
 
 # Getting the data from the .fits
-data=fits.getdata('Stokes_sunspot_HINODE.fits')
+data=fits.getdata('Stokes_sunspot_HINODE.fits') # HINODE data
 cal=fits.getdata('atlas_6301_6302.fits')
 
 # Defining the Stokes parameters
@@ -149,8 +149,7 @@ plt.xlabel(r'$\lambda$ [$\AA$]')
 plt.grid()
 #plt.savefig('4.eps',format='eps')
 
-# Search for the sunspot minimum
-
+# Parabolic fit to accurately determine the minima of our uncalibrated spectrum and of the calibration spectrum to determine the wavelengths.
 # Line 1 of the calibration
 # search range
 in1= 745
@@ -162,7 +161,6 @@ long_min=landa_cal[756]
 plt.figure(5)
 espect_cal = plt.plot(landa_cal[in1:in2],int_cal[in1:in2],'r.',label='datos')
 espect_cal1 = plt.plot(landa_cal[756],int_cal[756],'k.',markersize=9,label='Minimo de los datos')
-
 
 # Fitting the minimum
 aju_atlas1=ajuste(int_cal,landa_cal,in1,in2)
@@ -190,8 +188,7 @@ long_min=landa_cal[ind_min2]
 plt.plot(landa_cal[in1:in2],int_cal[in1:in2],'r.',label='datos')
 plt.plot(landa_cal[ind_min2],int_cal[ind_min2],'k.',markersize=9,label='Minimo de los datos')
 
-
-#hacemos el ajuste
+# Fitting the minimum
 aju_atlas2c=ajuste(int_cal,landa_cal,in1,in2)
 aju_atlas2c=np.array(aju_atlas2c)
 vmim2=min(aju_atlas2c[1,:])
@@ -205,12 +202,10 @@ plt.ylabel('Intensidad [cuentas]')
 plt.xlabel(r'$\lambda$ [$\AA$]')
 #plt.savefig('6.eps',format='eps')
 
-#linea 1 Modelo
 
+# Line 1 of the HINODE data
 in1= 22
 in2= 27
-
-
 
 plt.figure(7)
 v_m_1m = min(I_calm[in1:in2])
@@ -219,8 +214,7 @@ long_min1m=landa[ind_min1m]
 plt.plot(landa[in1:in2],I_calm[in1:in2],'r',label='datos')
 plt.plot(landa[ind_min1m],I_calm[ind_min1m],'k.',markersize=9,label='Minimo de los datos')
 
-
-#hacemos el ajuste
+# Fitting the minimum
 aju_atlas1m=ajuste(I_calm,landa,in1,in2)
 aju_atlas1m=np.array(aju_atlas1m)
 vmim1m=min(aju_atlas1m[1,:])
@@ -235,12 +229,9 @@ plt.xlabel(r'$\lambda$ [$\AA$]')
 #plt.savefig('7.eps',format='eps')
 
 
-#linea 2 Modelo
-
+# Line 2 of the HINODE data
 in1= 68
 in2= 74
-
-
 
 plt.figure(8)
 v_m_2m = min(I_calm[in1:in2])
@@ -249,8 +240,7 @@ long_min2m=landa[ind_min2m]
 plt.plot(landa[in1:in2],I_calm[in1:in2],'r',label='datos')
 plt.plot(landa[ind_min2m],I_calm[ind_min2m],'k.',markersize=9,label='Minimo de los datos')
 
-
-#hacemos el ajuste
+# Fitting the minimum
 aju_atlas2m=ajuste(I_calm,landa,in1,in2)
 aju_atlas2m=np.array(aju_atlas2m)
 vmim2m=min(aju_atlas2m[1,:])
@@ -265,17 +255,16 @@ plt.xlabel(r'$\lambda$ [$\AA$]')
 #plt.savefig('8.eps',format='eps')
 
 
-#Resultados del ajuste de los mínimos
+# Summary of the results of the adjustment of the minimum
 m=[aju_atlas1m[0,indmi1m][0][0],aju_atlas1m[1,indmi1m][0][0]],[aju_atlas2m[0,indmi2m][0][0],aju_atlas2m[1,indmi2m][0][0]]
 c=[aju_atlas1[0,indmi1][0][0],aju_atlas1[1,indmi1][0][0]],[aju_atlas2c[0,indmi2][0][0],aju_atlas2c[1,indmi2][0][0]]
 
-#ecuacion de la recta
+# Calculating of equation of the line for the wavelengths
 pend=(c[1][0]-c[0][0])/(m[1][0]-m[0][0])
 orde=c[0][0]-pend*m[0][0]
-
 long_cal=pend*landa+orde
 
-
+# Calibrated spectrum calm region
 plt.figure(9)
 plt.plot(long_cal,I_calm,label='HINODE')
 plt.plot(landa_cal,int_cal*2.95,label='FTS x2.95')
@@ -285,6 +274,7 @@ plt.xlabel(r'$\lambda$ [$\AA$]')
 plt.legend()
 #plt.savefig('9.eps',format='eps')
 
+# Calibrated spectrum umbra region
 plt.figure(10)
 plt.plot(long_cal,I_um)
 plt.xlabel(r'$\lambda$ [$\AA$]')
