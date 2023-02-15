@@ -284,7 +284,12 @@ plt.title('Espectro I zona umbra')
 #plt.savefig('10.eps',format='eps')
 
 
-########################Ensanchamiento doppler
+#----Measuring the magnetic field----#
+
+# Measuring the magnetic field in the umbra
+
+# We show that we are in a strong field regime:
+# we calculate the doppler broadening as the full width at half the I+V maximum
 IpV_um=I_um+V_um
 ImV_um=I_um-V_um
 
@@ -303,30 +308,24 @@ ind_mIpV=np.where(aju_IpV[1,:]==vmin_IV)
 
 anc_dop=(aju_IpV[0,vmed2]-aju_IpV[0,vmed1])/2
 
-
 plt.figure(11)
 plt.plot(long_cal,IpV_um,'k.',label='I+V ')
 plt.xlabel(r'$\lambda$ [$\AA$]')
 plt.ylabel('I [cuentas]')
 plt.title('I+V zona umbra')
 plt.grid()
-#plt.plot(long_cal[in1:in2],IpV_um[in1:in2],'r',markersize=1)
 plt.plot(aju_IpV[0,:],aju_IpV[1,:],label='ajuste')
 plt.legend()
 #plt.savefig('11.eps',format='eps')
 
-
-##################Landa_b
+# we calculate the zeeman broadening as the distance between the minima of I+V and I-V
 plt.figure(12)
 plt.plot(long_cal,IpV_um,'r-.',label='I + V')
 plt.plot(long_cal,ImV_um,'b-.',label='I - V')
 plt.xlabel(r'$\lambda$ [$\AA$]')
 plt.ylabel('I [cuentas]')
-
 plt.grid()
-
 plt.plot(aju_IpV[0,:],aju_IpV[1,:],'k',label='ajuste')
-
 
 in1= 72
 in2= 79
@@ -336,52 +335,45 @@ aju_ImV=np.array(aju_ImV)
 vmin_ImV=min(aju_ImV[1,:])
 ind_mImV=np.where(aju_ImV[1,:]==vmin_ImV)
 
-plt.plot(aju_ImV[0,:],aju_ImV[1,:],'k')
-
 anc_zeeman=(aju_ImV[0,ind_mImV]-aju_IpV[0,ind_mIpV])/2
 
+plt.plot(aju_ImV[0,:],aju_ImV[1,:],'k')
 plt.title('Ajuste Zeeman')
 plt.legend()
 #plt.savefig('12.eps',format='eps')
 
-####################Campo magnético
 
+# Magnetic field module
 C = 4.67e-13 
 geff = np.array([1.667, 2.5])
 lines = np.array([6301.52, 6302.51])
 line1 = find_closest(aju_atlas2c[0,:], lines[0])
 line2 = find_closest(aju_atlas2c[0,:], lines[1])
-
 B_umb = anc_zeeman/(C*geff[1]*aju_atlas2c[0,line2]**2) 
-################2377.47007631
-########################Calculo de los ángulos
 
 
+# Magnetic field angles
 def angulos(Q,U,V):
     phi=0.5*np.arctan2(U,Q)
     C=1/(np.sqrt((Q**2+U**2))/V)
     gamma=np.arccos(np.divide(-1+np.sqrt(4*(C**2)+1),2*C))
     phi[np.isnan(phi)]=0
-    
     return(phi*180/np.pi,gamma*180/np.pi)
     
 long=64
 
 phi,gamma=angulos(Q[:,:,long],U[:,:,long],V[:,:,long])
 
-
+# azimuth
 plt.figure(13)
-#azimuth = plt.imshow(np.swapaxes(phi[:, :],0,1), cmap = 'rainbow')
 azimuth = plt.imshow(phi[:, :],origin='lower' ,cmap = 'rainbow')
 cbar = plt.colorbar(azimuth)
 cbar.set_label(r'$\phi$ [º]')
 plt.xlabel('Desplazamiento de la rendija en el tiempo [px]')
 plt.ylabel('Puntos a lo largo de la rendija [px]')
-
 #plt.savefig('13.eps',format='eps')
 
-
-
+# gamma
 plt.figure(14)
 gamma = plt.imshow(gamma[:, :],origin='lower', cmap = 'rainbow')
 cbar = plt.colorbar(gamma)
@@ -391,10 +383,10 @@ plt.ylabel('Puntos a lo largo de la rendija [px]')
 #plt.savefig('14.eps',format='eps')
 
 
-####################################Campo débil
 
-
-########################Ensanchamiento doppler
+# Measuring the magnetic field in the calm region
+# We show that we are in a weak field regime
+# the doppler broadening
 IpV_calm=I_calm+V_calm
 ImV_calm=I_calm-V_calm
 
@@ -413,8 +405,6 @@ ind_mIpVc=np.where(aju_IpVc[1,:]==vmin_IVc)
 
 anc_dopc=(aju_IpVc[0,vmed2c]-aju_IpVc[0,vmed1c])/2
 
-
-
 plt.figure(15)
 plt.plot(long_cal,IpV_calm,'k.',label='I+V')
 plt.xlabel(r'$\lambda$ [$\AA$]')
@@ -426,15 +416,14 @@ plt.plot(aju_IpVc[0,:],aju_IpVc[1,:],label='ajuste')
 plt.legend()
 #plt.savefig('15.eps',format='eps')
 
-##################Landa_b
+
+# the zeeman broadening
 plt.figure(16)
 plt.plot(long_cal,IpV_calm,'r-',label='I + V')
 plt.plot(long_cal,ImV_calm,'b-.',label='I - V')
 plt.xlabel(r'$\lambda$ [$\AA$]')
 plt.ylabel('I [cuentas]')
 plt.title('Espectro I+-V Zona en calma')
-
-
 
 plt.plot(aju_IpVc[0,:],aju_IpVc[1,:],'k')
 
@@ -447,29 +436,24 @@ vmin_ImVc=min(aju_ImVc[1,:])
 ind_mImVc=np.where(aju_ImVc[1,:]==vmin_ImVc)
 
 plt.plot(aju_ImVc[0,:],aju_ImVc[1,:],'k',label='ajuste')
-
-anc_zeemanc=(aju_ImVc[0,ind_mImVc]-aju_IpVc[0,ind_mIpVc])/2
-
-
 plt.legend()
 plt.grid()
 #plt.savefig('16.eps',format='eps')
 
-##################Campo  magnético longitudinal
+anc_zeemanc=(aju_ImVc[0,ind_mImVc]-aju_IpVc[0,ind_mIpVc])/2
 
 
-
+# Longitudinal magnetic field
 paso=np.abs(long_cal[1]-long_cal[2])
 dIdlan=np.gradient(I_calm,paso)
 #dIdlan=der(I_calm, long_cal)
 B_calm = -(1/(C*aju_atlas2c[0,line1]**2*geff[0]))*(np.sum(V_calm*dIdlan)/np.sum(dIdlan**2))
 sigma = np.std(V_calm[40:60])
 B_calm_err = sigma/(C*aju_atlas2c[0,line1]**2*geff[0]*np.sqrt(np.sum(dIdlan**2)))
-
 print('Campo longitudinal, zona en calma',B_calm,'+-',B_calm_err)
 
 
-##################################Temperatura
+#----Measuring the temperatures----#
 
 h = 6.63e-34    # J·s
 k = 1.38e-23    # J/K
@@ -482,6 +466,7 @@ Ic=28920
 
 T=(1/T_media-(long_cal[ind_land]*1e-10*k)/(h*c)*np.log(I[:,:,ind_land]/Ic))**(-1)
 
+# temperature map
 plt.figure(17)
 Temperatura = plt.imshow(T[:, :],origin='lower', cmap = 'inferno')
 cbar = plt.colorbar(Temperatura)
@@ -489,60 +474,3 @@ cbar.set_label('T [K]')
 plt.xlabel('Desplazamiento de la rendija en el tiempo [px]')
 plt.ylabel('Puntos a lo largo de la rendija [px]')
 #plt.savefig('17.eps',format='eps')
-
-##################################Tmapa de velocidades
-
-
-'''
-bol_mat=np.zeros((np.shape(I)[0],np.shape(I)[1]))
-for i in range(np.shape(I)[0]):
-    for j in range(np.shape(I)[1]):
-        if (max(V[i,j,:])<900):
-            #bol_mat[i,j]=True
-            I_min=min(I[i,j,:])
-            ind_Imin=np.where(I[i,j,:]==I_min)
-            l1=long_cal[ind_Imin]
-            I_min_c=min(I_calm[40:60])
-            ind_Imin2=np.where(I_calm[40:60]==I_min_c)
-            l2=long_cal[ind_Imin2]
-            bol_mat[i,j]=float(l1[0])-float(l2)
-
-            
-        else:
-            V_min=min(V[i,j,:])
-            V_max=max(V[i,j,:])
-            V_mean=(V_min+V_max)/2
-            ind_V=find_closest(V[i,j,:],V_mean)
-            l1=long_cal[ind_V]
-            I_min_c=min(I_calm[40:60])
-            ind_Imin2=np.where(I_calm[40:60]==I_min_c)
-            l2=long_cal[ind_Imin2]
-            bol_mat[i,j]=float(l1)-float(l2)
-'''
-    
-'''
-fig=plt.figure(18)
-ax=fig.add_subplot(111)
-ax.imshow(bol_mat,aspect='auto')
-'''
-
-c = 3e8         # m/s
-#v = (bol_mat*c/long_cal[line1])*1e-3  # km/s
-v = np.loadtxt('velocity.txt')
-
-v2=np.zeros(np.shape(v))
-
-v2[100:300][30:150]=v[100:300][30:150]*1.00034
-
-v3=v2+v
-
-v=v-(v**(-1)*0.001)
-
-plt.figure(18)
-velmap = plt.imshow(v, cmap = 'seismic',origin='lower', vmin = -2, vmax = 2)
-cbar = plt.colorbar(velmap)
-cbar.set_label('v [km/s]')
-plt.title('Mapa de velocidad ')
-plt.xlabel('Desplazamiento de la rendija en el tiempo [px]')
-plt.ylabel('Puntos a lo largo de la rendija [px]')
-plt.savefig('18.eps',format='eps')
